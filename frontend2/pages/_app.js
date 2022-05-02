@@ -5,6 +5,7 @@ import React from "react";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
+import FooterUI from "../components/Footer";
 
 function MyApp({ Component, pageProps }) {
   const [status, setStatus] = React.useState(false);
@@ -61,9 +62,20 @@ function MyApp({ Component, pageProps }) {
     setStatus(false);
     router.push("/login");
   }
+  const imgt =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWBDctkqW8cUhvSUdjTwWECFN7WpjuBb2R7w&usqp=CAU";
 
   return (
-    <div>
+    <div
+      style={
+        {
+          // backgroundImage: `url(${imgt})`,
+          // backgroundRepeat: "no-repeat",
+          // backgroundAttachment: "fixed",
+          // backgroundSize: "100% 100%",
+        }
+      }
+    >
       <NextNProgress color="black" startPosition={0.6} height={10} />
       <h1
         style={{
@@ -114,6 +126,8 @@ function MyApp({ Component, pageProps }) {
       ) : null}
 
       <Component {...pageProps} />
+      <div style={{ height: "40px" }}></div>
+      <FooterUI />
     </div>
   );
 }

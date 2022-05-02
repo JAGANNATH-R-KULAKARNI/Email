@@ -8,10 +8,9 @@ import styles from "../styles/Hover.module.css";
 export default function Login() {
   const router = useRouter();
 
-  const { whoruProfile: whoruerrorProfile } = useSWR(
-    "profilelogin",
-    fetchTheProfile
-  );
+  React.useEffect(() => {
+    fetchTheProfile();
+  });
 
   async function fetchTheProfile() {
     const data = await supabase.auth.user();
@@ -38,7 +37,12 @@ export default function Login() {
 
   return (
     <div
-      style={{ display: "flex", justifyContent: "center", marginTop: "200px" }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        marginTop: "170px",
+        marginBottom: "150px",
+      }}
     >
       {" "}
       <Button

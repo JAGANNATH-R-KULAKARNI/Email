@@ -12,6 +12,7 @@ import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
 import { supabase } from "../utils/SupabaseClient";
+import axios from "axios";
 
 export default function SendEmail(props) {
   const [open, setOpen] = React.useState(true);
@@ -33,13 +34,50 @@ export default function SendEmail(props) {
       return;
     }
 
+    let type = 0;
+    let lol = 0;
+
+    await axios
+      .post("http://127.0.0.1:8000/playground/jag/", {
+        msg: text,
+      })
+      .then(async (res) => {
+        console.log("ham or spam");
+        console.log(res.data);
+        type = res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+        setSent(true);
+        setSent2(false);
+        lol = 1;
+
+        setTimeout(() => {
+          props.modalHandler(false);
+        }, 1500);
+        return;
+      });
+
+    if (lol) return;
+    const date = new Date();
+
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? "pm" : "am";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    var strTime = hours + ":" + minutes + " " + ampm;
+
     const finalD = [];
 
     to.map((item) => {
       finalD.push({
-        from: props.email,
-        to: item,
+        fromu: props.email,
+        tou: item,
         text: text,
+        type: type,
+        time: strTime,
       });
     });
     const { data, error } = await supabase.from("email_c").insert(finalD);
@@ -270,7 +308,6 @@ export default function SendEmail(props) {
         {!sent ? (
           <DialogActions>
             <Button
-              onClick={handleClose}
               style={{
                 borderRadius: "20px",
                 width: "100px",
