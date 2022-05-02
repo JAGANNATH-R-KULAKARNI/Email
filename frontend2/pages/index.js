@@ -53,7 +53,10 @@ export default function Home() {
   const fetchTheMessages = async () => {
     if (email.length == 0) return;
 
-    const { data, error } = await supabase.from("email_c").select();
+    const { data, error } = await supabase
+      .from("email_c")
+      .select()
+      .order("id", { ascending: false });
 
     if (data) {
       console.log("datassss");
