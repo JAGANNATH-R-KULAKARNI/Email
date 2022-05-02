@@ -7,10 +7,28 @@ import styles from "../styles/Hover.module.css";
 import { supabase } from "../../frontend2/utils/SupabaseClient";
 import { useRouter } from "next/router";
 import ScrollUI from "../components/scroll";
+import useSWR from "swr";
 
 export default function Home() {
   const [msg, setMsg] = React.useState(null);
   const router = useRouter();
+  const [modal, setModal] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const { whoruPrwdwqwqdwofile: whodwdwddwruerrorProfile } = useSWR(
+    "profileindex",
+    checkUser
+  );
+
+  React.useEffect(() => {
+    checkUser();
+  });
+  async function checkUser() {
+    const user = await supabase.auth.user();
+    if (user) {
+      setEmail(user.email);
+      return;
+    }
+  }
 
   const messageHandler = async () => {
     await axios
@@ -33,40 +51,48 @@ export default function Home() {
   }
   return (
     <div>
+      {modal && email ? (
+        <ScrollUI modalHandler={setModal} email={email} />
+      ) : null}
       <br />
-      <div
-        style={{
-          paddingLeft: "20%",
-          paddingRight: "20%",
-        }}
-      >
-        <Button
-          variant="contained"
-          startIcon={<AttachEmailIcon />}
+      {email ? (
+        <div
           style={{
-            width: "200px",
-            height: "50px",
-            borderRadius: "30px",
+            paddingLeft: "20%",
+            paddingRight: "20%",
           }}
-          className={styles.hovering}
         >
-          Compose
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<AttachEmailIcon />}
-          style={{
-            width: "200px",
-            height: "50px",
-            borderRadius: "30px",
-            float: "right",
-          }}
-          className={styles.hovering2}
-          onClick={logOut}
-        >
-          LogOut
-        </Button>
-      </div>
+          <Button
+            variant="contained"
+            startIcon={<AttachEmailIcon />}
+            style={{
+              width: "200px",
+              height: "50px",
+              borderRadius: "30px",
+            }}
+            className={styles.hovering}
+            onClick={() => {
+              setModal(true);
+            }}
+          >
+            Compose
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AttachEmailIcon />}
+            style={{
+              width: "200px",
+              height: "50px",
+              borderRadius: "30px",
+              float: "right",
+            }}
+            className={styles.hovering2}
+            onClick={logOut}
+          >
+            LogOut
+          </Button>
+        </div>
+      ) : null}
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div
