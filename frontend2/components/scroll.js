@@ -38,13 +38,13 @@ export default function SendEmail(props) {
     let lol = 0;
 
     await axios
-      .post("http://127.0.0.1:8000/playground/jag/", {
+      .post("https://email-spam-detector-1718.herokuapp.com/", {
         msg: text,
       })
       .then(async (res) => {
         console.log("ham or spam");
         console.log(res.data);
-        type = res.data;
+        type = res.data["result"];
       })
       .catch((err) => {
         console.log(err);

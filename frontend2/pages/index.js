@@ -79,20 +79,6 @@ export default function Home() {
     }
   };
 
-  const messageHandler = async () => {
-    await axios
-      .post("http://127.0.0.1:8000/playground/jag/", {
-        msg: "FreeMsg Hey there darling it's been 3 week's now and no word back! I'd like some fun you up for it still? Tb ok! XxX std chgs to send, £1.50 to rcv",
-      })
-      .then(async (res) => {
-        console.log(res.data);
-        setMsg(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   async function logOut() {
     await supabase.auth.signOut();
 
