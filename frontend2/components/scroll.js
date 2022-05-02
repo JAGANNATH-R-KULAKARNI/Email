@@ -6,6 +6,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import styles from "../styles/Hover.module.css";
+import styles2 from "../styles/Success.module.css";
+import styles3 from "../styles/Failure.module.css";
 import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
@@ -17,21 +19,40 @@ export default function SendEmail(props) {
   const [to, setTo] = React.useState([]);
   const [email, setEmail] = React.useState("");
   const [text, setText] = React.useState("");
-  const [sent, NotSent] = React.useState(false);
+  const [sent, setSent] = React.useState(false);
+  const [sent2, setSent2] = React.useState(false);
 
   const sendTheEmail = async () => {
-    const { data, error } = await supabase.from("email_c").insert([
-      { from: props.email, to: "benedict@gmail.com" },
-      { from: props.email, to: "benedict@gmail.com" },
-    ]);
-
-    if (error) {
-      alert("Email not sent");
+    if (to.length == 0) {
+      alert("Enter 'TO' address");
+      return;
     }
+
+    if (text.length < 5) {
+      alert("text should be atleast 5 charaters long");
+      return;
+    }
+
+    const finalD = [];
+
+    to.map((item) => {
+      finalD.push({
+        from: props.email,
+        to: item,
+        text: text,
+      });
+    });
+    const { data, error } = await supabase.from("email_c").insert(finalD);
 
     if (data) {
-      alert("Email sent successfully");
+      setSent2(true);
     }
+
+    setSent(true);
+
+    setTimeout(() => {
+      props.modalHandler(false);
+    }, 2000);
   };
 
   const toHandler = () => {
@@ -74,98 +95,80 @@ export default function SendEmail(props) {
       >
         <DialogTitle id="scroll-dialog-title">Send Email</DialogTitle>
         <Divider />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            paddingLeft: "5%",
-            paddingRight: "5%",
-            maxWidth: "600px",
-          }}
-        >
-          <h4 style={{ width: "10%", textAlign: "left" }}>To : </h4>
-          <div style={{ width: "20px" }}></div>
-          <TextField
-            id="filled-basic"
-            label="email"
-            variant="standard"
-            placeholder="jagannathrkulakarni@gmail.com"
-            style={{ width: "70%", color: "black" }}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{
-              input: {
-                color: "black",
-              },
-              "& .MuiOutlinedInput-root": {
-                "& > fieldset": {
-                  borderColor: "black",
-                },
-              },
-              "& .MuiOutlinedInput-root:hover": {
-                "& > fieldset": {
-                  borderColor: "black",
-                },
-              },
-              "& .MuiFormLabel-root": { color: "black", fontWeight: 100 },
-            }}
-          />
+        {sent ? (
+          <div style={{ width: "600px" }}>
+            {sent2 ? (
+              <svg
+                className={styles2.checkmark}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  className={styles2.checkmark__circle}
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                />
+                <path
+                  className={styles2.checkmark__check}
+                  fill="none"
+                  d="M14.1 27.2l7.1 7.2 16.7-16.8"
+                />
+              </svg>
+            ) : (
+              <svg
+                className={styles3.checkmark}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  className={styles3.checkmark__circle}
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                />
+                <path
+                  className={styles3.checkmark__check}
+                  fill="none"
+                  d="M16 16 36 36 M36 16 16 36"
+                />
+              </svg>
+            )}
 
-          <div style={{ width: "20px" }}></div>
-          <Button
-            style={{
-              borderRadius: "20px",
-              width: "100px",
-              height: "40px",
-              marginTop: "10px",
-            }}
-            className={styles.hovering2}
-            onClick={toHandler}
-          >
-            Add
-          </Button>
-        </div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          {to &&
-            to.map((item, index) => {
-              return (
-                <div style={{ paddingLeft: index == 0 ? "0px" : "5px" }}>
-                  <Chip
-                    label={item}
-                    key={index}
-                    style={{
-                      fontSize: "9px",
-                      backgroundColor: "white",
-                      color: "black",
-                      border: "solid 1px black",
-                    }}
-                    onDelete={() => handleDelete(index)}
-                  />
-                </div>
-              );
-            })}
-        </div>
-        <div style={{ height: "10px" }}></div>
-        <Divider />
-        <div style={{ minWidth: "600px", maxWidth: "600px" }}></div>
-        <DialogContent dividers={scroll === "paper"}>
-          <DialogContentText
-            id="scroll-dialog-description"
-            ref={descriptionElementRef}
-            tabIndex={-1}
-            style={{ display: "flex", justifyContent: "center" }}
-          >
-            <TextField
-              id="outlined-multiline-flexible"
-              label="text"
-              placeholder="My name is Jagannath. Can we meet tmr ?"
-              multiline
-              rows={4}
-              value={text}
-              onChange={(e) => {
-                setText(e.target.value);
+            <h2
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "-30px",
+                paddingBottom: "20px",
               }}
-              style={{ minWidth: "500px" }}
+            >
+              Email {sent2 ? "" : "Not"} Sent
+            </h2>
+          </div>
+        ) : null}
+        {!sent ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              paddingLeft: "5%",
+              paddingRight: "5%",
+              maxWidth: "600px",
+            }}
+          >
+            <h4 style={{ width: "10%", textAlign: "left" }}>To : </h4>
+            <div style={{ width: "20px" }}></div>
+            <TextField
+              id="filled-basic"
+              label="email"
+              variant="standard"
+              placeholder="jagannathrkulakarni@gmail.com"
+              style={{ width: "70%", color: "black" }}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               sx={{
                 input: {
                   color: "black",
@@ -183,34 +186,115 @@ export default function SendEmail(props) {
                 "& .MuiFormLabel-root": { color: "black", fontWeight: 100 },
               }}
             />
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            style={{
-              borderRadius: "20px",
-              width: "100px",
-              height: "40px",
-            }}
-            className={styles.hovering}
-            onClick={sendTheEmail}
-          >
-            Send
-          </Button>
-          <div style={{ width: "20px" }}></div>
-          <Button
-            onClick={handleClose}
-            style={{
-              borderRadius: "20px",
-              width: "100px",
-              height: "35px",
-            }}
-            className={styles.hovering2}
-          >
-            Discard
-          </Button>
-        </DialogActions>
+
+            <div style={{ width: "20px" }}></div>
+            <Button
+              style={{
+                borderRadius: "20px",
+                width: "100px",
+                height: "40px",
+                marginTop: "10px",
+              }}
+              className={styles.hovering2}
+              onClick={toHandler}
+            >
+              Add
+            </Button>
+          </div>
+        ) : null}
+        {!sent ? (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            {to &&
+              to.map((item, index) => {
+                return (
+                  <div style={{ paddingLeft: index == 0 ? "0px" : "5px" }}>
+                    <Chip
+                      label={item}
+                      key={index}
+                      style={{
+                        fontSize: "9px",
+                        backgroundColor: "white",
+                        color: "black",
+                        border: "solid 1px black",
+                      }}
+                      onDelete={() => handleDelete(index)}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        ) : null}
+
+        {!sent ? <div style={{ height: "10px" }}></div> : null}
+        {!sent ? <Divider /> : null}
+        <div style={{ minWidth: "600px", maxWidth: "600px" }}></div>
+        {!sent ? (
+          <DialogContent dividers={scroll === "paper"}>
+            <DialogContentText
+              id="scroll-dialog-description"
+              ref={descriptionElementRef}
+              tabIndex={-1}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              <TextField
+                id="outlined-multiline-flexible"
+                label="text"
+                placeholder="My name is Jagannath. Can we meet tmr ?"
+                multiline
+                rows={4}
+                value={text}
+                onChange={(e) => {
+                  setText(e.target.value);
+                }}
+                style={{ minWidth: "500px" }}
+                sx={{
+                  input: {
+                    color: "black",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "& > fieldset": {
+                      borderColor: "black",
+                    },
+                  },
+                  "& .MuiOutlinedInput-root:hover": {
+                    "& > fieldset": {
+                      borderColor: "black",
+                    },
+                  },
+                  "& .MuiFormLabel-root": { color: "black", fontWeight: 100 },
+                }}
+              />
+            </DialogContentText>
+          </DialogContent>
+        ) : null}
+        {!sent ? (
+          <DialogActions>
+            <Button
+              onClick={handleClose}
+              style={{
+                borderRadius: "20px",
+                width: "100px",
+                height: "40px",
+              }}
+              className={styles.hovering}
+              onClick={sendTheEmail}
+            >
+              Send
+            </Button>
+            <div style={{ width: "20px" }}></div>
+            <Button
+              onClick={handleClose}
+              style={{
+                borderRadius: "20px",
+                width: "100px",
+                height: "35px",
+              }}
+              className={styles.hovering2}
+            >
+              Discard
+            </Button>
+          </DialogActions>
+        ) : null}
       </Dialog>
     </div>
   );
