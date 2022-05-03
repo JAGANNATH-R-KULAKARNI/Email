@@ -22,6 +22,7 @@ export default function SendEmail(props) {
   const [text, setText] = React.useState("");
   const [sent, setSent] = React.useState(false);
   const [sent2, setSent2] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const sendTheEmail = async () => {
     if (to.length == 0) {
@@ -33,7 +34,7 @@ export default function SendEmail(props) {
       alert("text should be atleast 5 charaters long");
       return;
     }
-
+    setLoading(true);
     let type = 0;
     let lol = 0;
 
@@ -55,10 +56,14 @@ export default function SendEmail(props) {
         setTimeout(() => {
           props.modalHandler(false);
         }, 1500);
+        setLoading(false);
         return;
       });
 
-    if (lol) return;
+    if (lol) {
+      setLoading(false);
+      return;
+    }
     const date = new Date();
 
     var hours = date.getHours();
@@ -87,7 +92,7 @@ export default function SendEmail(props) {
     }
 
     setSent(true);
-
+    setLoading(false);
     setTimeout(() => {
       props.modalHandler(false);
     }, 2000);
@@ -232,8 +237,19 @@ export default function SendEmail(props) {
                 width: "100px",
                 height: "40px",
                 marginTop: "10px",
+                backgroundColor: "white",
+                color: "black",
+                border: "solid 2px black",
               }}
-              className={styles.hovering2}
+              // className={styles.hovering2}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "black";
+                e.target.style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "white";
+                e.target.style.color = "black";
+              }}
               onClick={toHandler}
             >
               Add
@@ -245,7 +261,10 @@ export default function SendEmail(props) {
             {to &&
               to.map((item, index) => {
                 return (
-                  <div style={{ paddingLeft: index == 0 ? "0px" : "5px" }}>
+                  <div
+                    style={{ paddingLeft: index == 0 ? "0px" : "5px" }}
+                    key={item}
+                  >
                     <Chip
                       label={item}
                       key={index}
@@ -310,13 +329,25 @@ export default function SendEmail(props) {
             <Button
               style={{
                 borderRadius: "20px",
-                width: "100px",
+                width: loading ? "150px" : "100px",
                 height: "40px",
+                backgroundColor: "black",
+                color: "white",
               }}
-              className={styles.hovering}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "white";
+                e.target.style.color = "black";
+                e.target.style.boxShadow = "-2px 0px 7px 2px #black";
+                e.target.style.border = "solid 2px black";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "black";
+                e.target.style.color = "white";
+              }}
+              // className={styles.hovering}
               onClick={sendTheEmail}
             >
-              Send
+              {loading ? "Sending..." : "Send"}
             </Button>
             <div style={{ width: "20px" }}></div>
             <Button
@@ -325,8 +356,19 @@ export default function SendEmail(props) {
                 borderRadius: "20px",
                 width: "100px",
                 height: "35px",
+                backgroundColor: "white",
+                color: "black",
+                border: "solid 2px black",
               }}
-              className={styles.hovering2}
+              // className={styles.hovering2}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "black";
+                e.target.style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "white";
+                e.target.style.color = "black";
+              }}
             >
               Discard
             </Button>

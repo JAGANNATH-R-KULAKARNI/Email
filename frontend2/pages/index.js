@@ -1,15 +1,16 @@
 import axios from "axios";
 import React from "react";
-import TabsUI from "../../frontend2/components/Tabs";
+import TabsUI from "../components/Tabs";
 import Button from "@mui/material/Button";
 import AttachEmailIcon from "@mui/icons-material/AttachEmail";
 import styles from "../styles/Hover.module.css";
-import { supabase } from "../../frontend2/utils/SupabaseClient";
+import { supabase } from "../utils/SupabaseClient";
 import { useRouter } from "next/router";
 import ScrollUI from "../components/scroll";
 import useSWR from "swr";
 import Divider from "@mui/material/Divider";
 import LogoutIcon from "@mui/icons-material/Logout";
+import Paper from "@mui/material/Paper";
 
 export default function Home() {
   const [msg, setMsg] = React.useState(null);
@@ -107,24 +108,47 @@ export default function Home() {
               width: "200px",
               height: "50px",
               borderRadius: "30px",
+              backgroundColor: "black",
+              color: "white",
             }}
-            className={styles.hovering}
+            // className={styles.hovering}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "white";
+              e.target.style.color = "black";
+              e.target.style.boxShadow = "-2px 0px 7px 2px #black";
+              e.target.style.border = "solid 2px black";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "black";
+              e.target.style.color = "white";
+            }}
             onClick={() => {
               setModal(true);
             }}
+            id="compose"
           >
             Compose
           </Button>
           <Button
             variant="contained"
-            startIcon={<LogoutIcon />}
             style={{
               width: "200px",
               height: "50px",
               borderRadius: "30px",
               float: "right",
+              backgroundColor: "white",
+              color: "black",
+              border: "solid 2px black",
             }}
-            className={styles.hovering2}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "black";
+              e.target.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "white";
+              e.target.style.color = "black";
+            }}
+            // className={styles.hovering2}
             onClick={logOut}
           >
             LogOut
